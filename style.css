@@ -1,0 +1,35 @@
+*{
+  margin:0;
+}
+
+html{
+  height: 100vh;
+}
+.ripple-wrap {
+  position: relative;
+}
+
+.ripple-wrap canvas {
+  position: absolute;
+  z-index: 1;
+}
+
+body {
+  display: flex;
+justify-content: space-between;
+height: 100%;
+}
+
+canvas { 
+  display: block; 
+  width: 50vw; 
+  height: 100vh; 
+  image-rendering: optimizeSpeed;
+  image-rendering: crisp-edges;
+}
+
+img{
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+  }
