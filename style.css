@@ -1,4 +1,4 @@
-*{
+/* *{
   margin:0;
 }
 
@@ -18,18 +18,20 @@ body {
   display: flex;
 justify-content: space-between;
 height: 100%;
+} */
+html, body {
+  background: #111;
+}
+body {
+  display: flex;
+justify-content: space-between;
+height: 100%;
+}
+#container {
+  background: #111;
+  left: 0;
+  top:0;
 }
 
-canvas { 
-  display: block; 
-  width: 50vw; 
-  height: 100vh; 
-  image-rendering: optimizeSpeed;
-  image-rendering: crisp-edges;
-}
 
-img{
-  width: 50%;
-  height: 100%;
-  object-fit: cover;
-  }
+

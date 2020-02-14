@@ -27,7 +27,7 @@ function drawPoint(ctx, y, x, r, color) {
 /**
  * Draw pose keypoints onto a canvas
  */
-function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
+function drawKeypoints(keypoints, minConfidence, ctx, scale = 1,boundX,boundY) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
 
@@ -35,20 +35,24 @@ function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
     const { y, x } = leftWrist.position;
     drawPoint(ctx, y * scale, x * scale, 10, "yellow");
     console.log("left:", x, y)
-    disturb((window.innerWidth/2)-(window.innerWidth-x), y);
+    mx = x - bounds.left;
+   my = y - bounds.top;
+    man = true;
   }
 
   if (rightWrist.score > minConfidence) {
     const { y, x } = rightWrist.position;
     drawPoint(ctx, y * scale, x * scale, 10, "blue");
     console.log("right:", x, y)
-    disturb((window.innerWidth/2)-(window.innerWidth-x), y);
+    mx = x - bounds.left;
+    my = y - bounds.top;
+    man = true;
   }
 
 }
 
-const videoWidth = window.innerWidth/2;
-const videoHeight = window.innerHeight;
+const videoWidth = (window.innerWidth/2)-250;
+const videoHeight = window.innerHeight-250;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -89,6 +93,9 @@ async function loadVideo() {
 function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById("output");
   const ctx = canvas.getContext("2d");
+  bounds = container.getBoundingClientRect();
+  let boundX = bounds.left;
+  let boundY = bounds.top;
   
 
   // since images are being fed from a webcam, we want to feed in the
@@ -130,7 +137,7 @@ function detectPoseInRealTime(video, net) {
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
         if (poseNetState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx);
+          drawKeypoints(keypoints, minPartConfidence, ctx,boundX,boundY);
         }
       }
     });
@@ -173,148 +180,131 @@ async function bindPage() {
 
 bindPage();
 
-/**
- * Water ripple effect.
- * Original code (Java) by Neil Wallis 
- * @link http://www.neilwallis.com/java/water.html
- * 
- * @author Sergey Chikuyonok (serge.che@gmail.com)
- * @link http://chikuyonok.ru
- */
+var NUM_PARTICLES = (ROWS = 150) * (COLS = 100),
+  THICKNESS = Math.pow(80, 2),
+  SPACING = 3,
+  MARGIN = 100,
+  COLOR = 220,
+  DRAG = 0.95,
+  EASE = 0.25,
+  /*
+    
+    used for sine approximation, but Math.sin in Chrome is still fast enough :)http://jsperf.com/math-sin-vs-sine-approximation
 
-const
-  canvasWater = document.getElementById('canvasWater'),
-  ctxWater = canvasWater.getContext('2d'),
-  delay = 30,
-  riprad = 3,
-  width = canvasWater.width,
-  height = canvasWater.height,
-  half_width = width >> 1,
-  half_height = height >> 1,
-  size = width * (height + 2) * 2;
+    B = 4 / Math.PI,
+    C = -4 / Math.pow( Math.PI, 2 ),
+    P = 0.225,
 
-let ripplemap = [],
-  last_map = [],
-  ripple,
-  texture,
-  oldind = width,
-  newind = width * (height + 3);
+    */
 
+  container,
+  particle,
+  canvas,
+  mouse,
+  stats,
+  list,
+  ctx,
+  tog,
+  man,
+  dx,
+  dy,
+  mx,
+  my,
+  d,
+  t,
+  f,
+  a,
+  b,
+  i,
+  n,
+  w,
+  h,
+  p,
+  s,
+  r,
+  c;
 
-function waterRipple() {
+particle = {
+  vx: 0,
+  vy: 0,
+  x: 0,
+  y: 0
+};
 
-  let img = document.querySelector('img')
-  ctxWater.drawImage(img, 0, 0,width, height);
-  texture = ctxWater.getImageData(0, 0, width, height);
-  ripple = ctxWater.getImageData(0, 0, width, height);
+function init() {
+  container = document.getElementById("container");
+  canvas = document.getElementById("swarm");
 
-  for (var i = 0; i < size; i++) {
-    last_map[i] = ripplemap[i] = 0;
+  ctx = canvas.getContext("2d");
+  man = false;
+  tog = true;
+
+  list = [];
+
+  w = canvas.width = (window.innerWidth/2)-150;
+  h = canvas.height = window.innerHeight-100;
+ 
+  for (i = 0; i < NUM_PARTICLES; i++) {
+    p = Object.create(particle);
+    p.x = p.ox = MARGIN + SPACING * (i % COLS);
+    p.y = p.oy = MARGIN + SPACING * Math.floor(i / COLS);
+
+    list[i] = p;
   }
 
-  run()
+  // container.addEventListener("mousemove", function(e) {
+  //   bounds = container.getBoundingClientRect();
+  //   mx = e.clientX - bounds.left;
+  //   my = e.clientY - bounds.top;
+  //   man = true;
+  // });
 
-};
-/**
-     * Main loop
-     */
-function run() {
-  newframe();
-
-  ctxWater.putImageData(ripple, 0, 0)
-    ;
+  if (typeof Stats === "function") {
+    document.body.appendChild((stats = new Stats()).domElement);
+  }
 }
 
-/**
- * Generates new ripples
- */
-function newframe() {
-  var a, b, data, cur_pixel, new_pixel, old_data;
+function step() {
+  if (stats) stats.begin();
 
-  var t = oldind; oldind = newind; newind = t;
-  var i = 0;
+  if ((tog = !tog)) {
+    if (!man) {
+      t = +new Date() * 0.001;
+      mx = w * 0.5 + Math.cos(t * 2.1) * Math.cos(t * 0.9) * w * 0.45;
+      my = h * 0.5 + Math.sin(t * 3.2) * Math.tan(Math.sin(t * 0.8)) * h * 0.45;
+    }
 
-  // create local copies of variables to decrease
-  // scope lookup time in Firefox
-  var _width = width,
-    _height = height,
-    _ripplemap = ripplemap,
-    _last_map = last_map,
-    _rd = ripple.data,
-    _td = texture.data,
-    _half_width = half_width,
-    _half_height = half_height;
+    for (i = 0; i < NUM_PARTICLES; i++) {
+      p = list[i];
 
-  for (var y = 0; y < _height; y++) {
-    for (var x = 0; x < _width; x++) {
-      var _newind = newind + i, _mapind = oldind + i;
-      data = (
-        _ripplemap[_mapind - _width] +
-        _ripplemap[_mapind + _width] +
-        _ripplemap[_mapind - 1] +
-        _ripplemap[_mapind + 1]) >> 1;
+      d = (dx = mx - p.x) * dx + (dy = my - p.y) * dy;
+      f = -THICKNESS / d;
 
-      data -= _ripplemap[_newind];
-      data -= data >> 5;
-
-      _ripplemap[_newind] = data;
-
-      //where data=0 then still, where data>0 then wave
-      data = 1024 - data;
-
-      old_data = _last_map[i];
-      _last_map[i] = data;
-
-      if (old_data != data) {
-        //offsets
-        a = (((x - _half_width) * data / 1024) << 0) + _half_width;
-        b = (((y - _half_height) * data / 1024) << 0) + _half_height;
-
-        //bounds check
-        if (a >= _width) a = _width - 1;
-        if (a < 0) a = 0;
-        if (b >= _height) b = _height - 1;
-        if (b < 0) b = 0;
-
-        new_pixel = (a + (b * _width)) * 4;
-        cur_pixel = i * 4;
-
-        _rd[cur_pixel] = _td[new_pixel];
-        _rd[cur_pixel + 1] = _td[new_pixel + 1];
-        _rd[cur_pixel + 2] = _td[new_pixel + 2];
+      if (d < THICKNESS) {
+        t = Math.atan2(dy, dx);
+        p.vx += f * Math.cos(t);
+        p.vy += f * Math.sin(t);
       }
 
-      ++i;
+      p.x += (p.vx *= DRAG) + (p.ox - p.x) * EASE;
+      p.y += (p.vy *= DRAG) + (p.oy - p.y) * EASE;
     }
+  } else {
+    b = (a = ctx.createImageData(w, h)).data;
+
+    for (i = 0; i < NUM_PARTICLES; i++) {
+      p = list[i];
+      (b[(n = (~~p.x + ~~p.y * w) * 4)] = b[n + 1] = b[n + 2] = COLOR),
+        (b[n + 3] = 255);
+    }
+
+    ctx.putImageData(a, 0, 0);
   }
+
+  if (stats) stats.end();
+
+  requestAnimationFrame(step);
 }
 
-/**
-    * Disturb water at specified point
-    */
-function disturb(dx, dy) {
-  dx <<= 0;
-  dy <<= 0;
-
-  for (var j = dy - riprad; j < dy + riprad; j++) {
-    for (var k = dx - riprad; k < dx + riprad; k++) {
-      ripplemap[oldind + (j * width) + k] += 1000;
-    }
-  }
-  //console.log("moving")
-}
-
-canvasWater.onclick = function (/* Event */ evt) {
-  //console.log(evt.offsetX , evt.offsetY)
-  //disturb(evt.offsetX || evt.layerX, evt.offsetY || evt.layerY);
-};
-
-setInterval(run, delay);
-
-// generate random ripples
-var rnd = Math.random;
-// setInterval(function () {
-//     disturb(rnd() * width, rnd() * height);
-// }, 700);
-
-waterRipple()
+init();
+step();
