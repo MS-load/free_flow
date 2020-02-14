@@ -17,10 +17,6 @@ const poseNetState = {
   },
 };
 
-const videoWidth = window.innerWidth/2;
-const videoHeight = window.innerHeight;
-
-
 function drawPoint(ctx, y, x, r, color) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -31,10 +27,9 @@ function drawPoint(ctx, y, x, r, color) {
 /**
  * Draw pose keypoints onto a canvas
  */
-function drawKeypoints(keypoints, minConfidence, ctx, scale = 1,rect) {
+function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
-  
 
   if (leftWrist.score > minConfidence) {
     const { y, x } = leftWrist.position;
@@ -52,7 +47,8 @@ function drawKeypoints(keypoints, minConfidence, ctx, scale = 1,rect) {
 
 }
 
-
+const videoWidth = window.innerWidth/2;
+const videoHeight = window.innerHeight;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -93,7 +89,7 @@ async function loadVideo() {
 function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById("output");
   const ctx = canvas.getContext("2d");
-  const rect = canvas.getBoundingClientRect()
+  
 
   // since images are being fed from a webcam, we want to feed in the
   // original image and then just flip the keypoints' x coordinates. If instead
@@ -134,7 +130,7 @@ function detectPoseInRealTime(video, net) {
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
         if (poseNetState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx,rect);
+          drawKeypoints(keypoints, minPartConfidence, ctx);
         }
       }
     });
