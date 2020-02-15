@@ -17,18 +17,20 @@ const poseNetState = {
   },
 };
 
+const scale = 8;
+
 function drawPoint(ctx, y, x, r, color) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.fillStyle = color;
   ctx.fill();
-  ctx.fillText(`points: ${x},${y}`, x+10, y+10)
+  ctx.fillText(`points: ${Math.floor(x)},${Math.floor(y)}`, x + 10, y + 10)
 }
 
 /**
  * Draw pose keypoints onto a canvas
  */
-function drawKeypoints(keypoints, minConfidence, ctx) {
+function drawKeypoints(keypoints, minConfidence, ctx,canvas) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
 
@@ -36,24 +38,26 @@ function drawKeypoints(keypoints, minConfidence, ctx) {
     const { y, x } = leftWrist.position;
     drawPoint(ctx, y, x, 10, "yellow");
     console.log("left:", x, y)
-    mx = x ;
-   my = y;
+    mx = (x/canvas.width)*(canvasParticle.width);
+    my = (y/canvas.height)*(canvasParticle.height);
     man = true;
+    console.log(mx,my)
   }
 
   if (rightWrist.score > minConfidence) {
     const { y, x } = rightWrist.position;
-    drawPoint(ctx, y, x , 10, "blue");
+    drawPoint(ctx, y, x, 10, "blue");
     console.log("right:", x, y)
-    mx = x;
-    my = y;
+    mx = (x/canvas.width)*(canvasParticle.width);
+    my = (y/canvas.height)*(canvasParticle.height);
     man = true;
+    console.log(mx,my)
   }
 
 }
 
-const videoWidth = (window.innerWidth/2)-250;
-const videoHeight = window.innerHeight-250;
+const videoWidth = 256;
+const videoHeight = 256;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -94,7 +98,7 @@ async function loadVideo() {
 function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById("output");
   const ctx = canvas.getContext("2d");
-  bounds = container.getBoundingClientRect();
+  
   // let boundX = bounds.left;
   // let boundY = bounds.top;
 
@@ -138,7 +142,7 @@ function detectPoseInRealTime(video, net) {
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
         if (poseNetState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx);
+          drawKeypoints(keypoints, minPartConfidence, ctx,canvas);
         }
       }
     });
@@ -181,10 +185,10 @@ async function bindPage() {
 
 bindPage();
 
-var NUM_PARTICLES = (ROWS = 150) * (COLS = 100),
+var NUM_PARTICLES = (ROWS = 150) * (COLS = 150),
   THICKNESS = Math.pow(80, 2),
   SPACING = 3,
-  MARGIN = 75,
+  MARGIN = 25,
   COLOR = 500,
   DRAG = 0.95,
   EASE = 0.25,
@@ -199,6 +203,7 @@ var NUM_PARTICLES = (ROWS = 150) * (COLS = 100),
     */
 
   //container,
+  canvasParticle = document.getElementById("swarm"),
   particle,
   stats,
   list,
@@ -232,7 +237,7 @@ particle = {
 
 function init() {
   //container = document.getElementById("container");
-  const canvasParticle = document.getElementById("swarm");
+
 
   ctxParticle = canvasParticle.getContext("2d");
   man = false;
@@ -240,9 +245,9 @@ function init() {
 
   list = [];
 
-  
-  w = canvasParticle.width  = COLS * SPACING + MARGIN * 2;;
-  h = canvasParticle.height = ROWS * SPACING + MARGIN * 2 ;
+
+  w = canvasParticle.width = COLS * SPACING + MARGIN * 2;
+  h = canvasParticle.height = ROWS * SPACING + MARGIN * 2;
 
   for (i = 0; i < NUM_PARTICLES; i++) {
     p = Object.create(particle);
@@ -266,7 +271,7 @@ function init() {
 
 function step() {
   // if (stats) stats.begin();
-  drawPoint(ctxParticle, my, mx, 10, "red") 
+  drawPoint(ctxParticle, my, mx, 10, "red")
   if ((tog = !tog)) {
     if (!man) {
       t = 5;
