@@ -22,30 +22,31 @@ function drawPoint(ctx, y, x, r, color) {
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.fillStyle = color;
   ctx.fill();
+  ctx.fillText(`points: ${x},${y}`, x+10, y+10)
 }
 
 /**
  * Draw pose keypoints onto a canvas
  */
-function drawKeypoints(keypoints, minConfidence, ctx, scale = 1,boundX,boundY) {
+function drawKeypoints(keypoints, minConfidence, ctx) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
 
   if (leftWrist.score > minConfidence) {
     const { y, x } = leftWrist.position;
-    drawPoint(ctx, y * scale, x * scale, 10, "yellow");
+    drawPoint(ctx, y, x, 10, "yellow");
     console.log("left:", x, y)
-    mx = x - bounds.left;
-   my = y - bounds.top;
+    mx = x ;
+   my = y;
     man = true;
   }
 
   if (rightWrist.score > minConfidence) {
     const { y, x } = rightWrist.position;
-    drawPoint(ctx, y * scale, x * scale, 10, "blue");
+    drawPoint(ctx, y, x , 10, "blue");
     console.log("right:", x, y)
-    mx = x - bounds.left;
-    my = y - bounds.top;
+    mx = x;
+    my = y;
     man = true;
   }
 
@@ -94,9 +95,9 @@ function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById("output");
   const ctx = canvas.getContext("2d");
   bounds = container.getBoundingClientRect();
-  let boundX = bounds.left;
-  let boundY = bounds.top;
-  
+  // let boundX = bounds.left;
+  // let boundY = bounds.top;
+
 
   // since images are being fed from a webcam, we want to feed in the
   // original image and then just flip the keypoints' x coordinates. If instead
@@ -137,7 +138,7 @@ function detectPoseInRealTime(video, net) {
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
         if (poseNetState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx,boundX,boundY);
+          drawKeypoints(keypoints, minPartConfidence, ctx);
         }
       }
     });
@@ -183,12 +184,12 @@ bindPage();
 var NUM_PARTICLES = (ROWS = 150) * (COLS = 100),
   THICKNESS = Math.pow(80, 2),
   SPACING = 3,
-  MARGIN = 100,
-  COLOR = 220,
+  MARGIN = 75,
+  COLOR = 500,
   DRAG = 0.95,
   EASE = 0.25,
   /*
-    
+
     used for sine approximation, but Math.sin in Chrome is still fast enough :)http://jsperf.com/math-sin-vs-sine-approximation
 
     B = 4 / Math.PI,
@@ -197,13 +198,11 @@ var NUM_PARTICLES = (ROWS = 150) * (COLS = 100),
 
     */
 
-  container,
+  //container,
   particle,
-  canvas,
-  mouse,
   stats,
   list,
-  ctx,
+  ctxParticle,
   tog,
   man,
   dx,
@@ -232,18 +231,19 @@ particle = {
 };
 
 function init() {
-  container = document.getElementById("container");
-  canvas = document.getElementById("swarm");
+  //container = document.getElementById("container");
+  const canvasParticle = document.getElementById("swarm");
 
-  ctx = canvas.getContext("2d");
+  ctxParticle = canvasParticle.getContext("2d");
   man = false;
   tog = true;
 
   list = [];
 
-  w = canvas.width = (window.innerWidth/2)-150;
-  h = canvas.height = window.innerHeight-100;
- 
+  
+  w = canvasParticle.width  = COLS * SPACING + MARGIN * 2;;
+  h = canvasParticle.height = ROWS * SPACING + MARGIN * 2 ;
+
   for (i = 0; i < NUM_PARTICLES; i++) {
     p = Object.create(particle);
     p.x = p.ox = MARGIN + SPACING * (i % COLS);
@@ -259,17 +259,17 @@ function init() {
   //   man = true;
   // });
 
-  if (typeof Stats === "function") {
-    document.body.appendChild((stats = new Stats()).domElement);
-  }
+  // if (typeof Stats === "function") {
+  //   document.body.appendChild((stats = new Stats()).domElement);
+  // }
 }
 
 function step() {
-  if (stats) stats.begin();
-
+  // if (stats) stats.begin();
+  drawPoint(ctxParticle, my, mx, 10, "red") 
   if ((tog = !tog)) {
     if (!man) {
-      t = +new Date() * 0.001;
+      t = 5;
       mx = w * 0.5 + Math.cos(t * 2.1) * Math.cos(t * 0.9) * w * 0.45;
       my = h * 0.5 + Math.sin(t * 3.2) * Math.tan(Math.sin(t * 0.8)) * h * 0.45;
     }
@@ -290,7 +290,7 @@ function step() {
       p.y += (p.vy *= DRAG) + (p.oy - p.y) * EASE;
     }
   } else {
-    b = (a = ctx.createImageData(w, h)).data;
+    b = (a = ctxParticle.createImageData(w, h)).data;
 
     for (i = 0; i < NUM_PARTICLES; i++) {
       p = list[i];
@@ -298,10 +298,10 @@ function step() {
         (b[n + 3] = 255);
     }
 
-    ctx.putImageData(a, 0, 0);
+    ctxParticle.putImageData(a, 0, 0);
   }
 
-  if (stats) stats.end();
+  // if (stats) stats.end();
 
   requestAnimationFrame(step);
 }
