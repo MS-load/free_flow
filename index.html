@@ -11,36 +11,35 @@
   <!-- Load Vue -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <!-- Load the script file-->
-  <!-- <script src="./script.js" defer></script> -->
-  <script src="./vuescript.js"></script>
+  <script src="./script.js" defer></script>
+  <!-- <script src="./vuescript.js"></script> -->
   <!-- Load the style sheet -->
   <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-  <div id="draw">
-    <div class="welcome-bg" v-if="popups.showWelcome">
-        <div class="welcome">
-            <h1 class="fade-up">Free Flow</h1>
-            <h2 class="begin fade-up"
-                        title="Close"
-                        v-on:click="popups.showWelcome = false">
-                Raise your hands
-        </h2>
-        </div>
+  <div id="page" :style="{ backgroundImage: 'url(' + image + ')' }">
+    <template v-if="start">
+      <div >
+      <h1>Free Flow</h1>
+      <p>Raise your hands</p>
     </div>
-  
-  <!-- the particle swarm -->
-  <div id="container">
+    </template>
+    <template v-else>
+      <!-- the particle swarm -->
+      <div id="container">
     <canvas id="swarm"></canvas>
   </div>
 
-  <!-- webcam and canvas elements -->
-  <div>
-    <div id="info" style="display:none"></div>
-    <video id="video" playsinline style="display:none"></video>
-    <canvas id="output"></canvas>
+      <!-- webcam and canvas elements -->
+      <div>
+        <div id="info" style="display:none"></div>
+        <video id="video" playsinline style="display:none"></video>
+        <canvas id="output"></canvas>
+      </div>
+    </template>
   </div>
+
 </body>
 
 </html>

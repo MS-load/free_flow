@@ -1,3 +1,11 @@
+var vm = new Vue({
+  el: '#page',
+  data: {
+      start: true,
+      image: './media/background.jpg'
+  }
+});
+
 const poseNetState = {
   algorithm: 'single-pose',
   input: {
