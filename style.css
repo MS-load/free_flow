@@ -1,29 +1,105 @@
-/* *{
-  margin:0;
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500");
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
-html{
-  height: 100vh;
-}
-.ripple-wrap {
-  position: relative;
-}
-
-.ripple-wrap canvas {
-  position: absolute;
-  z-index: 1;
-}
-
-body {
-  display: flex;
-justify-content: space-between;
-height: 100%;
-} */
-
 html, body {
   height: 100%;
   margin: 0em;
 }
+h1, h2, h3, h4, h5 {
+  font-weight: 500;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.text-faded {
+  opacity: .5;
+}
+
+.welcome-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  background-color: #463d6a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fade-up {
+  opacity: 0;
+
+  animation: fade-up 1s forwards cubic-bezier(0.2, 2, 0.4, 1);
+}
+
+.begin {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-weight: 400;
+  font-size: 16px;
+  border-radius: 4px;
+  animation-delay: 1s;
+  transition: all .15s;
+}
+
+.welcome {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.welcome h1.fade-up {
+  font-weight: 300;
+  font-size: 40px;
+  animation-delay: .25s;
+}
+
+.welcome h2.fade-up {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  animation-delay: .5s;
+}
+
+.welcome a.fade-up {
+  color: rgba(255, 255, 255, 0.5);
+  display: inline-block;
+  margin-top: 20px;
+  text-decoration: none;
+  animation-delay: .75s;
+}
+
+.welcome .begin.fade-up {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  margin-top: 60px;
+}
+
+
+@keyframes fade-up {
+  from {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+
 
 body {
   display: flex;
@@ -36,13 +112,11 @@ body>div {
   display: flex;
   align-items: center;
   flex-grow: 1;
-  height:100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
 
 canvas {
-
   background: #111;
-
 }
