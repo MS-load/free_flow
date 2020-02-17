@@ -6,15 +6,16 @@
 
 @font-face {
   font-family: title;
-  src: url(./fonts/Junction-bold.otf);
+  src: url(./fonts/Equinox_Bold.otf);
 }
 
 html, body {
   height: 100%;
   margin: 0em;
   font-family: 'Title', sans-serif;
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: 400;
+  text-align: center;
   
 }
 
@@ -30,7 +31,8 @@ body {
   
   /* width:100%; */
 }
-#page{
+
+.page{
   background-size: cover;
   color:white
 }

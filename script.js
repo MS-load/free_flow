@@ -1,8 +1,9 @@
-var vm = new Vue({
-  el: '#page',
+let app = new Vue({
+  el: '.page',
   data: {
-      start: true,
-      image: './media/background.jpg'
+    start: true,
+    imageStart: './media/background.jpg',
+    imageDemo: './media/background2.jpg'
   }
 });
 
@@ -43,41 +44,36 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
 
   if (leftWrist.score > minConfidence) {
+    app.$data.start = false
+    
     const { y, x } = leftWrist.position;
     drawPoint(ctx, y, x, 10, "yellow");
     console.log("left:", x, y)
-    // mx = (x / canvas.width) * (canvasParticle.width);
-    // my = (y / canvas.height) * (canvasParticle.height);
-    // man = true;
-    // console.log(mx, my)
 
-    //Saves the previous coordinates
     movePoint.px = movePoint.x;
     movePoint.py = movePoint.y;
 
     //Sets the new coordinates
-    movePoint.x =(x / canvas.width) * (canvasParticle.width);
+    movePoint.x = (x / canvas.width) * (canvasParticle.width);
     movePoint.y = (y / canvas.height) * (canvasParticle.height);
 
     movePoint.active = true;
-    
+
   }
 
   if (rightWrist.score > minConfidence) {
+    app.$data.start = false
+
     const { y, x } = rightWrist.position;
     drawPoint(ctx, y, x, 10, "blue");
     console.log("right:", x, y)
-    // mx = (x / canvas.width) * (canvasParticle.width);
-    // my = (y / canvas.height) * (canvasParticle.height);
-    // man = true;
-    // console.log(mx, my)
 
     //Saves the previous coordinates
     movePoint.px = movePoint.x;
     movePoint.py = movePoint.y;
 
     //Sets the new coordinates
-    movePoint.x =(x / canvas.width) * (canvasParticle.width);
+    movePoint.x = (x / canvas.width) * (canvasParticle.width);
     movePoint.y = (y / canvas.height) * (canvasParticle.height);
 
     movePoint.active = true;
@@ -118,6 +114,7 @@ async function setupCamera() {
 }
 
 async function loadVideo() {
+  //console.log(start)
   const video = await setupCamera();
   video.play();
 
@@ -128,18 +125,12 @@ function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById("output");
   const ctx = canvas.getContext("2d");
 
-  // since images are being fed from a webcam, we want to feed in the
-  // original image and then just flip the keypoints' x coordinates. If instead
-  // we flip the image, then correcting left-right keypoint pairs requires a
-  // permutation on all the keypoints.
   const flipPoseHorizontal = true;
 
   canvas.width = videoWidth;
   canvas.height = videoHeight;
 
   async function poseDetectionFrame() {
-    // Begin monitoring code for frames per second
-    //stats.begin();
 
     let poses = [];
     let minPoseConfidence;
@@ -182,6 +173,7 @@ function detectPoseInRealTime(video, net) {
 }
 
 async function bindPage() {
+
   const net = await posenet.load({
     architecture: "MobileNetV1",
     outputStride: 16,
@@ -223,10 +215,10 @@ let movePoint = {
 
 (function (w) {
 
- 
+
 
   let resolution = 10; //Width and height of each cell in the grid.
-  let pen_size =15; //Radius around the mouse cursor coordinates to reach when stirring
+  let pen_size = 15; //Radius around the mouse cursor coordinates to reach when stirring
   let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
   let num_rows = canvasParticle.height / resolution; //This is number of rows.
   let speck_count = 7500; //This determines how many particles will be made.

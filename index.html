@@ -12,32 +12,33 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <!-- Load the script file-->
   <script src="./script.js" defer></script>
-  <!-- <script src="./vuescript.js"></script> -->
   <!-- Load the style sheet -->
   <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-  <div id="page" :style="{ backgroundImage: 'url(' + image + ')' }">
-    <template v-if="start">
-      <div >
+  <div class="page"
+    v-bind:style="[start ? { backgroundImage: 'url(' + imageStart + ')' } : { backgroundImage: 'url(' + imageDemo + ')' }]">
+    <div v-if="start">
       <h1>Free Flow</h1>
       <p>Raise your hands</p>
+      <p>...detecting hands</p>
     </div>
-    </template>
-    <template v-else>
+    <div v-else>
       <!-- the particle swarm -->
       <div id="container">
-    <canvas id="swarm"></canvas>
-  </div>
+        <canvas id="swarm"></canvas>
+      </div>
 
       <!-- webcam and canvas elements -->
-      <div>
-        <div id="info" style="display:none"></div>
-        <video id="video" playsinline style="display:none"></video>
-        <canvas id="output"></canvas>
-      </div>
-    </template>
+
+    </div>
+
+    <div class="camera">
+      <div id="info" style="display:none"></div>
+      <video id="video" playsinline style="display:none"></video>
+      <canvas id="output" v-bind:style="[start ? {display:'none'} : { display:'block' }]"></canvas>
+    </div>
   </div>
 
 </body>
