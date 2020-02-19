@@ -8,8 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <!-- Load Posenet -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
-  <!-- Load Vue -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <!-- Load the script file-->
   <script src="./script.js" defer></script>
   <!-- Load the style sheet -->
@@ -17,27 +15,23 @@
 </head>
 
 <body>
-  <div class="page"
-    v-bind:style="[start ? { backgroundImage: 'url(' + imageStart + ')' } : { backgroundImage: 'url(' + imageDemo + ')' }]">
-    <div v-if="start">
+  <div>
+    <div>
       <h1>Free Flow</h1>
       <p>Raise your hands</p>
-      <p>...detecting hands</p>
-    </div>
-    <div v-else>
-      <!-- the particle swarm -->
-      <div id="container">
-        <canvas id="swarm"></canvas>
-      </div>
-
-      <!-- webcam and canvas elements -->
+      <p>...detecting</p>
 
     </div>
+    <!-- the particle swarm -->
+    <div>
+      <canvas id="swarm" style="display:none"></canvas>
+    </div>
 
+    <!-- webcam and canvas elements -->
     <div class="camera">
       <div id="info" style="display:none"></div>
       <video id="video" playsinline style="display:none"></video>
-      <canvas id="output" v-bind:style="[start ? {display:'none'} : { display:'block' }]"></canvas>
+      <canvas id="output"></canvas>
     </div>
   </div>
 
