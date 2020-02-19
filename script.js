@@ -56,6 +56,7 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   }
 
   if (rightWrist.score > minConfidence) {
+    
     const { y, x } = rightWrist.position;
     drawPoint(ctx, y, x, 10, "blue");
     console.log("right:", x, y)
@@ -213,10 +214,6 @@ let movePoint = {
   active: false
 };
 
-(function (w) {
-
- 
-
   let resolution = 10; //Width and height of each cell in the grid.
   let pen_size =15; //Radius around the mouse cursor coordinates to reach when stirring
   let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
@@ -267,7 +264,7 @@ let movePoint = {
 
       }
     }
-    w.onload = draw;
+    draw();
 
   }
 
@@ -509,14 +506,4 @@ let movePoint = {
     movePoint.active = true;
 
   }
-
-  w.Fluid = {
-    initialize: init
-  }
-
-}(window));
-
-window.requestAnimationFrame = window.requestAnimationFrame;
-
-
-Fluid.initialize();
+  init()
