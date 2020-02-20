@@ -26,15 +26,20 @@ h1, h2, h3, h4, h5 {
 body {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-
-  
+  align-items: center;
+  justify-content: space-evenly;
+  background-image: url(./media/background2.jpg);
+  background-position: center;
+  background-size: cover;  
+  background-repeat: no-repeat;
   /* width:100%; */
+
 }
 
-.page{
-  background-size: cover;
-  color:white
+#output{
+  position: absolute;
+  bottom:0.5rem;
+  right:1rem;
 }
 body>div {
   display: flex;
@@ -45,6 +50,6 @@ body>div {
   align-items: center;
 }
 
-/* canvas {
+#output  {
   background: #111;
-} */
+}

@@ -45,7 +45,6 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
 
   if (leftWrist.score > minConfidence || rightWrist.score > minConfidence) {
     app.$data.start = false
-    canvasParticle.style.display = "block"
     const { y, x } = leftWrist.position;
     drawPoint(ctx, y, x, 10, "yellow");
     console.log("left:", x, y)
@@ -63,8 +62,8 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
 
 }
 
-const videoWidth = 256;
-const videoHeight = 256;
+const videoWidth = 200;
+const videoHeight = 150;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {

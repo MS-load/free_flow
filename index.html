@@ -17,22 +17,22 @@
 </head>
 
 <body>
-  <div class="page"
-    v-bind:style="[start ? { backgroundImage: 'url(' + imageStart + ')' } : { backgroundImage: 'url(' + imageStart + ')' }]">
+  <div class="page">
+
+    <!-- the start message -->
     <div v-if="start">
       <h1>Free Flow</h1>
       <p>Put your hand up ...</p>
     </div>
+
+    <!-- the particle swarm -->
     <div>
-      <!-- the particle swarm -->
       <div id="container">
-        <canvas id="swarm" style="display:none"></canvas>
+        <canvas id="swarm" v-bind:style="[start ? {display:'none'} : { display:'block' }]"></canvas>
       </div>
-
-      <!-- webcam and canvas elements -->
-
     </div>
 
+    <!-- webcam and canvas elements -->
     <div class="camera">
       <div id="info" style="display:none"></div>
       <video id="video" playsinline style="display:none"></video>
