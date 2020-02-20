@@ -9,6 +9,13 @@
   src: url(./fonts/Equinox_Bold.otf);
 }
 
+html {
+  
+  background: url(./media/background12.jpg) no-repeat top fixed;
+  background-size: cover;
+  
+}
+
 html, body {
   height: 100%;
   margin: 0em;
@@ -16,30 +23,18 @@ html, body {
   font-size: 1.3rem;
   font-weight: 400;
   text-align: center;
-  
+  color:white;
 }
 
 h1, h2, h3, h4, h5 {
   font-weight: 500;
 }
 
-body {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-evenly;
-  background-image: url(./media/background2.jpg);
-  background-position: center;
-  background-size: cover;  
-  background-repeat: no-repeat;
-  /* width:100%; */
-
-}
-
 #output{
   position: absolute;
-  bottom:0.5rem;
-  right:1rem;
+  bottom:0;
+  right:0;
+  clip-path: circle(120px at center);
 }
 body>div {
   display: flex;
@@ -50,6 +45,9 @@ body>div {
   align-items: center;
 }
 
-#output  {
-  background: #111;
+#swarm{
+  position: absolute;
+  top:0;
+  left:0;
 }
+

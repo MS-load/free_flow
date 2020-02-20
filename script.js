@@ -45,8 +45,11 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
 
   if (leftWrist.score > minConfidence || rightWrist.score > minConfidence) {
     app.$data.start = false
+  }
+
+  if (leftWrist.score > minConfidence) {
     const { y, x } = leftWrist.position;
-    drawPoint(ctx, y, x, 10, "yellow");
+    drawPoint(ctx, y, x, 10, "teal");
     console.log("left:", x, y)
 
     movePoint.px = movePoint.x;
@@ -59,11 +62,25 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
     movePoint.active = true;
 
   }
+  if (rightWrist.score > minConfidence){
+    const { y, x } = rightWrist.position;
+    drawPoint(ctx, y, x, 10, "Turquoise");
+    console.log("left:", x, y)
+
+    movePoint.px = movePoint.x;
+    movePoint.py = movePoint.y;
+
+    //Sets the new coordinates
+    movePoint.x = (x / canvas.width) * (canvasParticle.width);
+    movePoint.y = (y / canvas.height) * (canvasParticle.height);
+
+    movePoint.active = true;
+  }
 
 }
 
-const videoWidth = 200;
-const videoHeight = 150;
+const videoWidth = 256;
+const videoHeight = 256;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -182,8 +199,8 @@ async function bindPage() {
 bindPage();
 
 let canvasParticle = document.getElementById("swarm");
-canvasParticle.width = 900; //Needs to be a multiple of the resolution value below.
-canvasParticle.height = 600; //This too.
+canvasParticle.width = 1450; //Needs to be a multiple of the resolution value below.
+canvasParticle.height = 500; //This too.
 
 let ctxParticle;
 let movePoint = {
@@ -194,22 +211,23 @@ let movePoint = {
   active: false
 };
 
-  let resolution = 10; //Width and height of each cell in the grid.
-  let pen_size = 15; //Radius around the mouse cursor coordinates to reach when stirring
+  let resolution =10; //Width and height of each cell in the grid.
+  let pen_size = 20; //Radius around the mouse cursor coordinates to reach when stirring
   let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
   let num_rows = canvasParticle.height / resolution; //This is number of rows.
-  let speck_count = 7500; //This determines how many particles will be made.
+  let speck_count = 9000; //This determines how many particles will be made.
   let vec_cells = []; //The array that will contain the grid cells
   let particles = []; //The array that will contain the particles
 
 
   function init() {
+    console.log(screen.height,screen.width)
 
     ctxParticle = canvasParticle.getContext("2d");
     canvasParticle.height = canvasParticle.height;
 
     for (i = 0; i < speck_count; i++) {
-      particles.push(new particle(Math.random() * canvasParticle.width, Math.random() * canvasParticle.height));
+      particles.push(new particle(Math.floor() * canvasParticle.width, Math.random() * canvasParticle.height));
     }
 
     for (col = 0; col < num_cols; col++) {
@@ -332,12 +350,12 @@ let movePoint = {
 
     ctxParticle.clearRect(0, 0, canvasParticle.width, canvasParticle.height);
 
-    let gradient = ctxParticle.createLinearGradient(95, 15, 15, 102, 20, 40);
-    gradient.addColorStop("0", 'yellow');
-    gradient.addColorStop("0.5", 'red');
-    gradient.addColorStop("0.75", 'purple');
-    gradient.addColorStop("0.9", 'magenta');
-    gradient.addColorStop("1", 'blue');
+    let gradient = ctxParticle.createLinearGradient(0, 0, 1000, 0);
+    gradient.addColorStop("0", 'magenta');
+    // gradient.addColorStop("0.5", 'white');
+    // gradient.addColorStop("0.75", 'purple');
+    // gradient.addColorStop("0.9", 'magenta');
+    gradient.addColorStop("1", 'yellow');
     ctxParticle.strokeStyle = gradient;
 
     update_particle();
@@ -439,8 +457,8 @@ let movePoint = {
     ) * 0.25;
 
 
-    cell_data.xv *= 0.98;
-    cell_data.yv *= 0.98;
+    cell_data.xv *= 0.95;
+    cell_data.yv *= 0.95;
   }
 
 
