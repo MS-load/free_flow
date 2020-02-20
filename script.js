@@ -43,9 +43,9 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
 
-  if (leftWrist.score > minConfidence) {
+  if (leftWrist.score > minConfidence || rightWrist.score > minConfidence) {
     app.$data.start = false
-    
+    canvasParticle.style.display = "block"
     const { y, x } = leftWrist.position;
     drawPoint(ctx, y, x, 10, "yellow");
     console.log("left:", x, y)
@@ -59,24 +59,6 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
 
     movePoint.active = true;
 
-  }
-
-  if (rightWrist.score > minConfidence) {
-    app.$data.start = false
-
-    const { y, x } = rightWrist.position;
-    drawPoint(ctx, y, x, 10, "blue");
-    console.log("right:", x, y)
-
-    //Saves the previous coordinates
-    movePoint.px = movePoint.x;
-    movePoint.py = movePoint.y;
-
-    //Sets the new coordinates
-    movePoint.x = (x / canvas.width) * (canvasParticle.width);
-    movePoint.y = (y / canvas.height) * (canvasParticle.height);
-
-    movePoint.active = true;
   }
 
 }
@@ -213,10 +195,6 @@ let movePoint = {
   active: false
 };
 
-(function (w) {
-
-
-
   let resolution = 10; //Width and height of each cell in the grid.
   let pen_size = 15; //Radius around the mouse cursor coordinates to reach when stirring
   let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
@@ -267,7 +245,7 @@ let movePoint = {
 
       }
     }
-    w.onload = draw;
+   draw()
 
   }
 
@@ -496,27 +474,4 @@ let movePoint = {
     this.xv = this.yv = 0;
   }
 
-
-  function mouse_move_handler(e) {
-    //Saves the previous coordinates
-    movePoint.px = movePoint.x;
-    movePoint.py = movePoint.y;
-
-    //Sets the new coordinates
-    movePoint.x = e.offsetX;
-    movePoint.y = e.offsetY;
-
-    movePoint.active = true;
-
-  }
-
-  w.Fluid = {
-    initialize: init
-  }
-
-}(window));
-
-window.requestAnimationFrame = window.requestAnimationFrame;
-
-
-Fluid.initialize();
+init()

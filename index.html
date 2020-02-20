@@ -18,16 +18,15 @@
 
 <body>
   <div class="page"
-    v-bind:style="[start ? { backgroundImage: 'url(' + imageStart + ')' } : { backgroundImage: 'url(' + imageDemo + ')' }]">
+    v-bind:style="[start ? { backgroundImage: 'url(' + imageStart + ')' } : { backgroundImage: 'url(' + imageStart + ')' }]">
     <div v-if="start">
       <h1>Free Flow</h1>
-      <p>Raise your hands</p>
-      <p>...detecting hands</p>
+      <p>Put your hand up ...</p>
     </div>
-    <div v-else>
+    <div>
       <!-- the particle swarm -->
       <div id="container">
-        <canvas id="swarm"></canvas>
+        <canvas id="swarm" style="display:none"></canvas>
       </div>
 
       <!-- webcam and canvas elements -->
