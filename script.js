@@ -198,9 +198,11 @@ async function bindPage() {
 
 bindPage();
 
+const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 let canvasParticle = document.getElementById("swarm");
-canvasParticle.width = 1450; //Needs to be a multiple of the resolution value below.
-canvasParticle.height = 500; //This too.
+canvasParticle.width = 10* (Math.floor((90*vw)/10)); //Needs to be a multiple of the resolution value below.
+canvasParticle.height = 10* (Math.floor((90*vh)/10)); //This too.
 
 let ctxParticle;
 let movePoint = {
@@ -221,7 +223,7 @@ let movePoint = {
 
 
   function init() {
-    console.log(screen.height,screen.width)
+    console.log(canvasParticle.height,canvasParticle.width)
 
     ctxParticle = canvasParticle.getContext("2d");
     canvasParticle.height = canvasParticle.height;

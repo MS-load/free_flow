@@ -9,45 +9,42 @@
   src: url(./fonts/Equinox_Bold.otf);
 }
 
-html {
-  
-  background: url(./media/background12.jpg) no-repeat top fixed;
-  background-size: cover;
-  
-}
-
 html, body {
   height: 100%;
-  margin: 0em;
+  margin: 0;
+  background: url(./media/background12.jpg) no-repeat top fixed;
+  background-size: cover;
   font-family: 'Title', sans-serif;
   font-size: 1.3rem;
   font-weight: 400;
   text-align: center;
-  color:white;
+  color: white;
+  width: 100%;
+
 }
 
 h1, h2, h3, h4, h5 {
   font-weight: 500;
 }
 
-#output{
-  position: absolute;
-  bottom:0;
-  right:0;
-  clip-path: circle(120px at center);
-}
 body>div {
   display: flex;
   align-items: center;
   flex-grow: 1;
   height: 100%;
   justify-content: center;
-  align-items: center;
+  width: 100%;
 }
 
-#swarm{
+#output {
   position: absolute;
-  top:0;
-  left:0;
+  bottom: 0;
+  right: 0;
+  clip-path: circle(120px at center);
 }
 
+#swarm {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
