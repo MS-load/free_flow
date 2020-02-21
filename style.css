@@ -23,12 +23,14 @@ html, body {
 
 }
 
-body {
-  backdrop-filter: contrast(100%);
-}
-
 h1, h2, h3, h4, h5 {
   font-weight: 500;
+}
+img{
+  width:15%;
+  position: absolute;
+  top:0;
+  padding-left: 1rem;
 }
 
 body>div {
@@ -51,9 +53,3 @@ body>div {
   justify-self: center;
 }
 
-img{
-  width:15%;
-  position: absolute;
-  top:25%;
-  left:10%
-}

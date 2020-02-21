@@ -18,7 +18,7 @@
 
 <body>
   <div class="page">
-
+    <img src="./media/balloon.png">
     <!-- the start message -->
     <div v-if="start">
       <h1>Free Flow</h1>
@@ -38,9 +38,10 @@
       <video id="video" playsinline style="display:none"></video>
       <canvas id="output" v-bind:style="[start ? {display:'none'} : { display:'block' }]"></canvas>
     </div>
+   
   </div>
 
-  <img src="./media/balloon.png">
+  
 </body>
 
 </html>
