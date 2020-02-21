@@ -2,8 +2,7 @@ let app = new Vue({
   el: '.page',
   data: {
     start: true,
-    darkMode: false,
-  }
+  },
 }
 )
 
@@ -286,7 +285,7 @@ function draw() {
 }
 
 function change_cell_velocity(cell_data, mvelX, mvelY) {
-  let pen_size = 30
+  let pen_size = 20
   let dx = cell_data.x - movePoint.x
   let dy = cell_data.y - movePoint.y
   let dist = Math.sqrt(dy * dy + dx * dx)
@@ -364,6 +363,8 @@ function particle(x, y) {
   this.xv = this.yv = 0
 }
 
+let prevPos = 0
+const min_jump = 5
 /**-------------------Drawing the required points------------------- */
 function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist')
@@ -379,21 +380,16 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   if (!app.$data.start) {
     if (nose.score > minConfidence) {
       const { y, x } = nose.position
-      let xPos = (x / canvas.width) * (vw)
-      let yPos = (y / canvas.height) * (vh)
 
-      if (xPos < vw - 200) {
-        img.style.left = `${1 + xPos}px`
-      }
-      else {
-        img.style.left = 1
-      }
-
-      if (yPos < vh - 300) {
-        img.style.top = `${1 + yPos}px`
-      }
-      else {
-        img.style.top = 1
+      if (Math.abs(prevPos - x) > min_jump) {
+        let xPos = (x / canvas.width) * (vw)
+        if (xPos < vw - 200) {
+          img.style.left = `${1 + xPos}px`
+        }
+        else {
+          img.style.left = 1
+        }
+        prevPos = x
       }
     }
   }
