@@ -44,71 +44,61 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   const img = document.querySelector('img')
 
 
-  // if (leftWrist.score > minConfidence || rightWrist.score > minConfidence) {
-  //   app.$data.start = false
-  // }
-
-  if (nose.score > minConfidence) {
-    console.log(nose.position)
-    console.log(vw)
-
-    const { y, x } = nose.position;
-    let xPos = (x / canvas.width) * (vw)
-    let yPos = (y / canvas.height) * (vh)
-
-    if (xPos < vw - 200) {
-      img.style.left = `${1 + xPos}px`
-    }
-    else {
-      img.style.left = 1
-    }
-
-    if (yPos < vh - 300) {
-      img.style.top = `${1 + yPos}px`
-    }
-    else {
-      img.style.top = 1
-    }
-    // let imgXpos = Math.min(vw,x)
-    // if (imgXpos < vw) {
-    //   img.style.translate = (x ,y)
-    // }
-
-    // else {
-    //   img.style.right = 0
-    //   img.style.left = 0
-    // }    //if (imgYpos < vh) { img.style.top = (y / vh) * (vh) + '%' }
+  if (leftWrist.score > minConfidence || rightWrist.score > minConfidence) {
+    app.$data.start = false
   }
 
-  // if (leftWrist.score > minConfidence) {
-  //   const { y, x } = leftWrist.position;
-  //   drawPoint(ctx, y, x, 10, "teal");
-  //   console.log("left:", x, y)
+  if (!app.$data.start) {
+    if (nose.score > minConfidence) {
+      const { y, x } = nose.position;
+      let xPos = (x / canvas.width) * (vw)
+      let yPos = (y / canvas.height) * (vh)
 
-  //   movePoint.px = movePoint.x;
-  //   movePoint.py = movePoint.y;
+      if (xPos < vw - 200) {
+        img.style.left = `${1 + xPos}px`
+      }
+      else {
+        img.style.left = 1
+      }
 
-  //   //Sets the new coordinates
-  //   movePoint.x = (x / canvas.width) * (canvasParticle.width);
-  //   movePoint.y = (y / canvas.height) * (canvasParticle.height);
+      if (yPos < vh - 300) {
+        img.style.top = `${1 + yPos}px`
+      }
+      else {
+        img.style.top = 1
+      }
+    }
+  }
 
-  //   movePoint.active = true;
+  if (leftWrist.score > minConfidence) {
+    const { y, x } = leftWrist.position;
+    drawPoint(ctx, y, x, 10, "teal");
+    console.log("left:", x, y)
 
-  // }
-  // if (rightWrist.score > minConfidence) {
-  //   const { y, x } = rightWrist.position;
-  //   drawPoint(ctx, y, x, 10, "Turquoise");
-  //   console.log("left:", x, y)
+    movePoint.px = movePoint.x;
+    movePoint.py = movePoint.y;
 
-  //   movePoint.px = movePoint.x;
-  //   movePoint.py = movePoint.y;
+    //Sets the new coordinates
+    movePoint.x = (x / canvas.width) * (canvasParticle.width);
+    movePoint.y = (y / canvas.height) * (canvasParticle.height);
 
-  //   //Sets the new coordinates
-  //   movePoint.x = (x / canvas.width) * (canvasParticle.width);
-  //   movePoint.y = (y / canvas.height) * (canvasParticle.height);
+    movePoint.active = true;
 
-  //   movePoint.active = true;
-  // }
+  }
+  if (rightWrist.score > minConfidence) {
+    const { y, x } = rightWrist.position;
+    drawPoint(ctx, y, x, 10, "Turquoise");
+    console.log("left:", x, y)
+
+    movePoint.px = movePoint.x;
+    movePoint.py = movePoint.y;
+
+    //Sets the new coordinates
+    movePoint.x = (x / canvas.width) * (canvasParticle.width);
+    movePoint.y = (y / canvas.height) * (canvasParticle.height);
+
+    movePoint.active = true;
+  }
 
 }
 
