@@ -50,3 +50,10 @@ body>div {
 #swarm {
   justify-self: center;
 }
+
+img{
+  width:15%;
+  position: absolute;
+  top:25%;
+  left:10%
+}
