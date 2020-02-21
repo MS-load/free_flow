@@ -5,6 +5,7 @@ let app = new Vue({
   }
 });
 
+/**Getting the data from PoseNet */
 const poseNetState = {
   algorithm: 'single-pose',
   input: {
@@ -24,19 +25,90 @@ const poseNetState = {
   },
 };
 
-const scale = 8;
+const videoWidth = 256;
+const videoHeight = 256;
 
-function drawPoint(ctx, y, x, r, color) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.fillText(`points: ${Math.floor(x)},${Math.floor(y)}`, x + 10, y + 10)
+
+async function setupCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error(
+      "Browser API navigator.mediaDevices.getUserMedia not available"
+    );
+  }
+
+  const video = document.getElementById("video");
+  video.width = videoWidth;
+  video.height = videoHeight;
+
+  const mobile = false;
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      facingMode: "user",
+      width: mobile ? undefined : videoWidth,
+      height: mobile ? undefined : videoHeight
+    }
+  });
+  video.srcObject = stream;
+
+  return new Promise(resolve => {
+    video.onloadedmetadata = () => {
+      resolve(video);
+    };
+  });
 }
 
-/**
- * Draw pose keypoints onto a canvas
- */
+async function loadVideo() {
+  const video = await setupCamera();
+  video.play();
+  return video;
+}
+
+function detectPoseInRealTime(video, net) {
+  const canvas = document.getElementById("output");
+  const ctx = canvas.getContext("2d");
+  const flipPoseHorizontal = true;
+
+  canvas.width = videoWidth;
+  canvas.height = videoHeight;
+
+  async function poseDetectionFrame() {
+
+    let poses = [];
+    let minPoseConfidence;
+    let minPartConfidence;
+
+    const pose = await net.estimatePoses(video, {
+      flipHorizontal: flipPoseHorizontal,
+      decodingMethod: "single-person"
+    });
+    poses = poses.concat(pose);
+    minPoseConfidence = +poseNetState.singlePoseDetection.minPoseConfidence;
+    minPartConfidence = +poseNetState.singlePoseDetection.minPartConfidence;
+
+    ctx.clearRect(0, 0, videoWidth, videoHeight);
+
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.translate(-videoWidth, 0);
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+    ctx.restore();
+
+    // For each pose (i.e. person) detected in an image, loop through the poses
+    // and draw the resulting skeleton and keypoints if over certain confidence
+    // scores
+    poses.forEach(({ score, keypoints }) => {
+      if (score >= minPoseConfidence) {
+        if (poseNetState.output.showPoints) {
+          drawKeypoints(keypoints, minPartConfidence, ctx, canvas);
+        }
+      }
+    });
+    requestAnimationFrame(poseDetectionFrame);
+  }
+  poseDetectionFrame();
+}
+
 function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
   let leftWrist = keypoints.find(point => point.part === 'leftWrist');
   let rightWrist = keypoints.find(point => point.part === 'rightWrist');
@@ -102,95 +174,12 @@ function drawKeypoints(keypoints, minConfidence, ctx, canvas) {
 
 }
 
-const videoWidth = 256;
-const videoHeight = 256;
-
-async function setupCamera() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    throw new Error(
-      "Browser API navigator.mediaDevices.getUserMedia not available"
-    );
-  }
-
-  const video = document.getElementById("video");
-  video.width = videoWidth;
-  video.height = videoHeight;
-
-  const mobile = false;
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: {
-      facingMode: "user",
-      width: mobile ? undefined : videoWidth,
-      height: mobile ? undefined : videoHeight
-    }
-  });
-  video.srcObject = stream;
-
-  return new Promise(resolve => {
-    video.onloadedmetadata = () => {
-      resolve(video);
-    };
-  });
-}
-
-async function loadVideo() {
-  //console.log(start)
-  const video = await setupCamera();
-  video.play();
-
-  return video;
-}
-
-function detectPoseInRealTime(video, net) {
-  const canvas = document.getElementById("output");
-  const ctx = canvas.getContext("2d");
-
-  const flipPoseHorizontal = true;
-
-  canvas.width = videoWidth;
-  canvas.height = videoHeight;
-
-  async function poseDetectionFrame() {
-
-    let poses = [];
-    let minPoseConfidence;
-    let minPartConfidence;
-
-    const pose = await net.estimatePoses(video, {
-      flipHorizontal: flipPoseHorizontal,
-      decodingMethod: "single-person"
-    });
-    poses = poses.concat(pose);
-    minPoseConfidence = +poseNetState.singlePoseDetection.minPoseConfidence;
-    minPartConfidence = +poseNetState.singlePoseDetection.minPartConfidence;
-
-    ctx.clearRect(0, 0, videoWidth, videoHeight);
-
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.translate(-videoWidth, 0);
-    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
-    ctx.restore();
-
-    // For each pose (i.e. person) detected in an image, loop through the poses
-    // and draw the resulting skeleton and keypoints if over certain confidence
-    // scores
-    poses.forEach(({ score, keypoints }) => {
-      if (score >= minPoseConfidence) {
-        if (poseNetState.output.showPoints) {
-          drawKeypoints(keypoints, minPartConfidence, ctx, canvas);
-        }
-      }
-    });
-
-    // End monitoring code for frames per second
-    // stats.end();
-
-    requestAnimationFrame(poseDetectionFrame);
-  }
-
-  poseDetectionFrame();
+function drawPoint(ctx, y, x, r, color) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.fillText(`points: ${Math.floor(x)},${Math.floor(y)}`, x + 10, y + 10)
 }
 
 async function bindPage() {
@@ -222,8 +211,8 @@ async function bindPage() {
 
 bindPage();
 
-const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 100);
-const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 100);
+let vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 100);
+let vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 100);
 
 let canvasParticle = document.getElementById("swarm");
 canvasParticle.width = 10 * (Math.floor((0.9 * vw) / 10)); //Needs to be a multiple of the resolution value below.
@@ -239,19 +228,15 @@ let movePoint = {
 };
 
 let resolution = 10; //Width and height of each cell in the grid.
-let pen_size = 30; //Radius around the mouse cursor coordinates to reach when stirring
-let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
-let num_rows = canvasParticle.height / resolution; //This is number of rows.
-let speck_count = 9000; //This determines how many particles will be made.
 let vec_cells = []; //The array that will contain the grid cells
 let particles = []; //The array that will contain the particles
 
-
 function setUpParticles() {
-  console.log(canvasParticle.height, canvasParticle.width)
-
   ctxParticle = canvasParticle.getContext("2d");
   canvasParticle.height = canvasParticle.height;
+  const speck_count = 9000;//This determines how many particles will be made.
+  const num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
+  const num_rows = canvasParticle.height / resolution; //This is number of rows.
 
   for (i = 0; i < speck_count; i++) {
     particles.push(new particle(Math.random() * canvasParticle.width, Math.random() * canvasParticle.height));
@@ -368,7 +353,7 @@ function draw() {
       let cell_data = cell_datas[j];
 
       if (movePoint.active) {
-        change_cell_velocity(cell_data, movePoint_xv, movePoint_yv, pen_size);
+        change_cell_velocity(cell_data, movePoint_xv, movePoint_yv);
       }
 
       update_pressure(cell_data);
@@ -377,11 +362,8 @@ function draw() {
 
   ctxParticle.clearRect(0, 0, canvasParticle.width, canvasParticle.height);
 
-  let gradient = ctxParticle.createLinearGradient(0, 0, 1000, 0);
+  const gradient = ctxParticle.createLinearGradient(0, 0, 1000, 0);
   gradient.addColorStop("0", 'magenta');
-  // gradient.addColorStop("0.5", 'white');
-  // gradient.addColorStop("0.75", 'purple');
-  // gradient.addColorStop("0.9", 'magenta');
   gradient.addColorStop("1", 'yellow');
   ctxParticle.strokeStyle = gradient;
 
@@ -406,8 +388,9 @@ function draw() {
 
 }
 
-function change_cell_velocity(cell_data, mvelX, mvelY, pen_size) {
+function change_cell_velocity(cell_data, mvelX, mvelY) {
   //This gets the distance between the cell and the mouse cursor.
+  let pen_size = 30; //Radius around the mouse cursor coordinates to reach when stirring
   let dx = cell_data.x - movePoint.x;
   let dy = cell_data.y - movePoint.y;
   let dist = Math.sqrt(dy * dy + dx * dx);
@@ -517,5 +500,3 @@ function particle(x, y) {
   this.y = this.py = y;
   this.xv = this.yv = 0;
 }
-
-// setUpParticles()
