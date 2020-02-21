@@ -198,11 +198,12 @@ async function bindPage() {
 
 bindPage();
 
-const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 100);
+const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 100);
+
 let canvasParticle = document.getElementById("swarm");
-canvasParticle.width = 10* (Math.floor((90*vw)/10)); //Needs to be a multiple of the resolution value below.
-canvasParticle.height = 10* (Math.floor((90*vh)/10)); //This too.
+canvasParticle.width = 10* (Math.floor((0.9 * vw)/10)); //Needs to be a multiple of the resolution value below.
+canvasParticle.height = 10* (Math.floor((0.9 * vh)/10)); //This too.
 
 let ctxParticle;
 let movePoint = {
@@ -214,7 +215,7 @@ let movePoint = {
 };
 
   let resolution =10; //Width and height of each cell in the grid.
-  let pen_size = 20; //Radius around the mouse cursor coordinates to reach when stirring
+  let pen_size = 30; //Radius around the mouse cursor coordinates to reach when stirring
   let num_cols = canvasParticle.width / resolution; //This value is the number of columns in the grid.
   let num_rows = canvasParticle.height / resolution; //This is number of rows.
   let speck_count = 9000; //This determines how many particles will be made.
@@ -229,7 +230,7 @@ let movePoint = {
     canvasParticle.height = canvasParticle.height;
 
     for (i = 0; i < speck_count; i++) {
-      particles.push(new particle(Math.floor() * canvasParticle.width, Math.random() * canvasParticle.height));
+      particles.push(new particle(Math.random() * canvasParticle.width, Math.random() * canvasParticle.height));
     }
 
     for (col = 0; col < num_cols; col++) {
