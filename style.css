@@ -23,11 +23,10 @@ html, body {
   background-blend-mode: darken;
 }
 
-
-
 h1, h2, h3, h4, h5 {
   font-weight: 500;
 }
+
 img{
   width:15%;
   position: absolute;
@@ -52,7 +51,7 @@ body>div {
   clip-path: circle(120px at center);
 }
 
-#swarm {
+#particleSwarm {
   justify-self: center;
 }
 
