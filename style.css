@@ -1,35 +1,70 @@
-*{
-  margin:0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html{
-  height: 100vh;
-}
-.ripple-wrap {
-  position: relative;
+@font-face {
+  font-family: title;
+  src: url(./fonts/Equinox_Bold.otf);
 }
 
-.ripple-wrap canvas {
-  position: absolute;
-  z-index: 1;
-}
-
-body {
-  display: flex;
-justify-content: space-between;
-height: 100%;
-}
-
-canvas { 
-  display: block; 
-  width: 50vw; 
-  height: 100vh; 
-  image-rendering: optimizeSpeed;
-  image-rendering: crisp-edges;
-}
-
-img{
-  width: 50%;
+html, body {
   height: 100%;
-  object-fit: cover;
-  }
+  margin: 0;
+  background: url(./media/background2.jpg) no-repeat bottom fixed;
+  background-size: cover;
+  font-family: 'Title', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-align: center;
+  color: white;
+  width: 100%;
+}
+
+h1 {
+  padding-top: 5rem;
+  font-weight: 500;
+}
+
+.page>img {
+  width: 15%;
+  position: absolute;
+  top: 30%;
+  left: 0;
+  padding-left: 1rem;
+}
+
+p {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+p>img {
+  color: white;
+  width: 1.5rem;
+  filter: invert(1);
+  padding-left: 0.5rem;
+}
+
+body>div {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+#output {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  clip-path: circle(120px at center);
+}
+
+#particleSwarm {
+  justify-self: center;
+}

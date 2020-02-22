@@ -1,0 +1,19 @@
+{
+  "name": "tfjs-free_flow",
+  "version": "1.0.0",
+  "description": "An experimentation with Tensor Flow.js and a little bit of Vue.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MS-load/free_flow.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MS-load/free_flow/issues"
+  },
+  "homepage": "https://github.com/MS-load/free_flow#readme"
+}
