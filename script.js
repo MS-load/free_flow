@@ -86,7 +86,8 @@ function detectPoseInRealTime(video, net) {
     poses = poses.concat(pose)
     minPoseConfidence = +poseNetState.singlePoseDetection.minPoseConfidence
     minPartConfidence = +poseNetState.singlePoseDetection.minPartConfidence
-
+    console.log(pose)
+    
     ctx.clearRect(0, 0, videoWidth, videoHeight)
 
     ctx.save()
