@@ -4,10 +4,10 @@ A free-floating balloon that is controlled using hand and face gestures. This we
 ***
 
 ### Try it
-[Demo]https://ms-load.github.io/free_flow/
+[Demo] https://ms-load.github.io/free_flow/
 
 ### Repo Link
-[Repository]https://github.com/MS-load/free_flow
+[Repository] https://github.com/MS-load/free_flow
 
 ***
 
@@ -21,4 +21,4 @@ A free-floating balloon that is controlled using hand and face gestures. This we
 ***
 
 ### References
-[Tensor Flow]https://github.com/tensorflow
+[Tensor Flow] https://github.com/tensorflow
