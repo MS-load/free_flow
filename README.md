@@ -2,6 +2,10 @@
 A free-floating balloon that is controlled using hand and face gestures. This web app uses an AI pose detection model (PoseNet), provided by TensorFlow.js which detects the positions of parts of the body in a live video stream.
 
 ***
+### Preview
+![sneek-peek](./media/demo.gif)
+
+***
 
 ### Try it
 [Demo](https://ms-load.github.io/free_flow/)
@@ -10,6 +14,7 @@ A free-floating balloon that is controlled using hand and face gestures. This we
 [Repository](https://github.com/MS-load/free_flow)
 
 ***
+
 
 ### Credits
 <ul>
